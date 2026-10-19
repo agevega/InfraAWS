@@ -1,8 +1,8 @@
 # InfraAWS
 
-Terraform IaC for AWS Platform
+IaC con Terraform para la plataforma AWS
 
-# Environments
+# Entornos
 
 - development
 - staging
