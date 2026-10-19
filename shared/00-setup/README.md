@@ -5,6 +5,7 @@ Módulos base. Se aplican una sola vez por cuenta de AWS, en orden numérico, an
 | Módulo | Para qué sirve |
 |---|---|
 | [00-tf-backend](00-tf-backend/) | Bucket S3 que guarda el state de Terraform de todos los módulos |
+| [01-budgets](01-budgets/) | Alertas por email cuando el gasto supera los presupuestos mensual y diario |
 
 ## Requisitos
 
@@ -12,6 +13,17 @@ Módulos base. Se aplican una sola vez por cuenta de AWS, en orden numérico, an
 - AWS CLI `>= 2.32` (para `aws login`)
 - Región `eu-south-2` activada en la cuenta (viene desactivada por defecto)
 - Credenciales: `aws login --profile terraform`
+
+## Variables comunes
+
+Todos los módulos las declaran con los mismos valores por defecto.
+
+| Variable | Para qué sirve | Valor por defecto |
+|---|---|---|
+| `aws_region` | Región de despliegue | `eu-south-2` (España) |
+| `aws_profile` | Perfil de AWS CLI con el que se ejecuta Terraform | `terraform` |
+| `project_name` | Nombre del proyecto. De él salen los nombres de los recursos y la tag `Project` | `agevegacom` |
+| `project_owner` | Tag `Owner` | `Alejandro Vega` |
 
 ## 00-tf-backend
 
@@ -28,15 +40,6 @@ Módulos base. Se aplican una sola vez por cuenta de AWS, en orden numérico, an
 El cifrado (SSE-S3) y las ACLs desactivadas ya vienen así por defecto en AWS, por eso no se declaran. El bloqueo del state usa el lock nativo de Terraform en S3 (`use_lockfile`), sin DynamoDB.
 
 Coste: céntimos al mes; solo se guardan unos KB de state y sus versiones.
-
-### Variables
-
-| Variable | Para qué sirve | Valor por defecto |
-|---|---|---|
-| `aws_region` | Región de despliegue | `eu-south-2` (España) |
-| `aws_profile` | Perfil de AWS CLI con el que se ejecuta Terraform | `terraform` |
-| `project_name` | Nombre del proyecto. De él salen el bucket (`<project_name>-terraform-state`) y la tag `Project` | `agevegacom` |
-| `project_owner` | Tag `Owner` | `Alejandro Vega` |
 
 ### Bootstrap (solo la primera vez)
 
@@ -69,6 +72,36 @@ terraform {
 }
 ```
 
-### Fork para otro proyecto o cuenta
+## 01-budgets
 
-Cambiar las variables de la tabla y, en todos los `backend.tf`, el `bucket` (y el `profile` si cambia), porque los bloques backend no admiten variables. Después, comentar aquí el bloque backend y seguir el bootstrap.
+### Recursos
+
+| Recurso | Para qué sirve |
+|---|---|
+| `aws_budgets_budget.monthly` | Presupuesto mensual. Avisa al superar el 10 %, 50 % y 100 % del límite con el gasto real, y si la previsión del mes supera el 200 %. |
+| `aws_budgets_budget.daily` | Presupuesto diario. Avisa al superar el 50 %, 100 %, 200 %, 500 % y 1000 % del límite. Detecta picos aunque el mensual ya haya avisado. |
+
+Coste: gratis; los presupuestos sin acciones no tienen coste.
+
+### Variables
+
+| Variable | Para qué sirve | Valor por defecto |
+|---|---|---|
+| `monthly_budget_amount` | Límite mensual en USD | `10` |
+| `daily_budget_amount` | Límite diario en USD | `1` |
+| `notification_email` | Email que recibe las alertas | `agevega@gmail.com` |
+
+### Despliegue
+
+Desde `shared/00-setup/`:
+
+```bash
+cd 01-budgets
+terraform init
+terraform apply
+git add .terraform.lock.hcl     # y commitear
+```
+
+## Fork para otro proyecto o cuenta
+
+Cambiar las variables comunes y `notification_email` y, en todos los `backend.tf`, el `bucket` (y el `profile` si cambia), porque los bloques backend no admiten variables. Después, comentar el bloque backend de `00-tf-backend` y seguir su bootstrap.

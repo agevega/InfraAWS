@@ -16,28 +16,22 @@ variable "project_name" {
   default     = "agevegacom"
 }
 
-variable "common_tags" {
-  description = "Common tags"
-  type        = map(string)
-  default = {
-    Project     = "agevegacom"
-    Owner       = "Alejandro Vega"
-    ManagedBy   = "terraform"
-    Environment = "global"
-    Module      = "00-setup/02-budgets"
-  }
+variable "project_owner" {
+  description = "Project owner"
+  type        = string
+  default     = "Alejandro Vega"
 }
 
 variable "monthly_budget_amount" {
   description = "Monthly budget amount in USD"
-  type        = string
-  default     = "10"
+  type        = number
+  default     = 10
 }
 
 variable "daily_budget_amount" {
   description = "Daily budget amount in USD"
-  type        = string
-  default     = "1"
+  type        = number
+  default     = 1
 }
 
 variable "notification_email" {
