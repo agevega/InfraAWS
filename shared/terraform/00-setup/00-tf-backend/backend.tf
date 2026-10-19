@@ -1,4 +1,6 @@
 # USAGE INSTRUCTIONS:
+# 0. Credentials:
+#    'aws login --profile terraform' and 'export AWS_PROFILE=terraform'.
 # 1. Run 'terraform apply' first to create the bucket.
 # 2. Once created, UNCOMMENT the 'terraform' block below.
 # 3. Run 'terraform init -migrate-state' and type 'yes'.
@@ -10,6 +12,5 @@
 #     region       = "eu-south-2"
 #     use_lockfile = true
 #     encrypt      = true
-#     profile      = "terraform"
 #   }
 # }
