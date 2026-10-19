@@ -1,14 +1,9 @@
 resource "aws_s3_bucket" "tf_state" {
-  bucket        = var.state_bucket_name
-  force_destroy = false
+  bucket = var.state_bucket_name
 
   lifecycle {
     prevent_destroy = true
   }
-
-  tags = merge(var.common_tags, {
-    Name = var.state_bucket_name
-  })
 }
 
 resource "aws_s3_bucket_ownership_controls" "tf_state" {
@@ -17,7 +12,6 @@ resource "aws_s3_bucket_ownership_controls" "tf_state" {
     object_ownership = "BucketOwnerEnforced"
   }
 }
-
 
 resource "aws_s3_bucket_public_access_block" "tf_state" {
   bucket                  = aws_s3_bucket.tf_state.id
@@ -43,39 +37,22 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "tf_state" {
   }
 }
 
-# Lifecycle to handle old versions of tfstate
 resource "aws_s3_bucket_lifecycle_configuration" "tf_state" {
   bucket = aws_s3_bucket.tf_state.id
+
+  depends_on = [aws_s3_bucket_versioning.tf_state]
 
   rule {
     id     = "retain-tfstate-history"
     status = "Enabled"
 
-    # Applies to the entire bucket
-    filter {
-      prefix = ""
-    }
+    filter {}
 
-    # Transition of non-current versions: cheap and fast to retrieve
-    noncurrent_version_transition {
-      noncurrent_days = 30
-      storage_class   = "GLACIER_IR"
-    }
-
-    # Even cheaper (slow retrieval)
-    noncurrent_version_transition {
-      noncurrent_days = 120
-      storage_class   = "DEEP_ARCHIVE"
-    }
-
-    # Expire non-current versions after 365 days,
-    # keeping at least the 10 most recent versions
     noncurrent_version_expiration {
-      noncurrent_days           = 365
+      noncurrent_days           = 90
       newer_noncurrent_versions = 10
     }
 
-    # Hygiene: abort incomplete multipart uploads
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
     }

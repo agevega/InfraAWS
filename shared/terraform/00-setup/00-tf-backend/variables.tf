@@ -23,7 +23,7 @@ variable "common_tags" {
     Project     = "agevegacom"
     Owner       = "Alejandro Vega"
     ManagedBy   = "terraform"
-    Environment = "global"
+    Environment = "shared"
     Module      = "00-setup/00-tf-backend"
   }
 }
