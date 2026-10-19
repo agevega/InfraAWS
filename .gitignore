@@ -1,6 +1,7 @@
 # General / OS
 .DS_Store
 Thumbs.db
+*:Zone.Identifier
 *.log
 *.zip
 tmp/*
