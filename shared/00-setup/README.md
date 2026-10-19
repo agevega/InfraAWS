@@ -87,8 +87,8 @@ Coste: gratis; los presupuestos sin acciones no tienen coste.
 
 | Variable | Para qué sirve | Valor por defecto |
 |---|---|---|
-| `monthly_budget_amount` | Límite mensual en USD | `10` |
-| `daily_budget_amount` | Límite diario en USD | `1` |
+| `monthly_budget_amount` | Límite mensual en USD | `10.00` |
+| `daily_budget_amount` | Límite diario en USD | `1.00` |
 | `notification_email` | Email que recibe las alertas | `agevega@gmail.com` |
 
 ### Despliegue

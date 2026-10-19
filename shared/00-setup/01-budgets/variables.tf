@@ -25,13 +25,13 @@ variable "project_owner" {
 variable "monthly_budget_amount" {
   description = "Monthly budget amount in USD"
   type        = number
-  default     = 10
+  default     = 10.00
 }
 
 variable "daily_budget_amount" {
   description = "Daily budget amount in USD"
   type        = number
-  default     = 1
+  default     = 1.00
 }
 
 variable "notification_email" {

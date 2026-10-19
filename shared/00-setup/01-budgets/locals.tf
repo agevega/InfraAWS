@@ -1,6 +1,6 @@
 locals {
-  monthly_budget_name = "${var.project_name}-monthly"
-  daily_budget_name   = "${var.project_name}-daily"
+  monthly_budget_name = "${var.project_name}-monthly-budget"
+  daily_budget_name   = "${var.project_name}-daily-budget"
 
   common_tags = {
     Project     = var.project_name
