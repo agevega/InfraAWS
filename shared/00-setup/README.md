@@ -27,16 +27,31 @@ Módulos base. Se aplican una sola vez por cuenta de AWS, en orden numérico, an
 
 El cifrado (SSE-S3) y las ACLs desactivadas ya vienen así por defecto en AWS, por eso no se declaran. El bloqueo del state usa el lock nativo de Terraform en S3 (`use_lockfile`), sin DynamoDB.
 
+Coste: céntimos al mes; solo se guardan unos KB de state y sus versiones.
+
+### Variables
+
+| Variable | Para qué sirve | Valor por defecto |
+|---|---|---|
+| `aws_region` | Región de despliegue | `eu-south-2` (España) |
+| `aws_profile` | Perfil de AWS CLI con el que se ejecuta Terraform | `terraform` |
+| `project_name` | Nombre del proyecto. De él salen el bucket (`<project_name>-terraform-state`) y la tag `Project` | `agevegacom` |
+| `project_owner` | Tag `Owner` | `Alejandro Vega` |
+
 ### Bootstrap (solo la primera vez)
 
-El bucket no puede guardar su propio state antes de existir, así que el backend de `backend.tf` empieza comentado:
+El bucket no puede guardar su propio state antes de existir, así que el backend de `backend.tf` empieza comentado. Desde `shared/00-setup/`:
 
-1. `terraform init`
-2. `terraform apply`
-3. Descomentar el bloque `terraform` de `backend.tf`.
-4. `terraform init -migrate-state` y responder `yes`.
-5. Comprobar que `terraform state list` muestra los recursos y borrar los ficheros locales `terraform.tfstate` (queda vacío) y `terraform.tfstate.backup` (copia completa).
-6. Commitear `.terraform.lock.hcl`.
+```bash
+cd 00-tf-backend
+terraform init
+terraform apply
+# Descomentar el bloque terraform de backend.tf
+terraform init -migrate-state   # responder yes
+terraform state list            # debe mostrar los recursos
+rm terraform.tfstate terraform.tfstate.backup
+git add .terraform.lock.hcl     # y commitear
+```
 
 ### Usar el backend desde otros módulos
 
@@ -56,6 +71,4 @@ terraform {
 
 ### Fork para otro proyecto o cuenta
 
-1. Cambiar `project_name` y `project_owner` en `variables.tf`. El nombre del bucket se deriva de `project_name`.
-2. Actualizar `bucket` (y `profile` si cambia) en todos los `backend.tf`. Los bloques backend no admiten variables.
-3. Comentar aquí el bloque backend y seguir los pasos de bootstrap.
+Cambiar las variables de la tabla y, en todos los `backend.tf`, el `bucket` (y el `profile` si cambia), porque los bloques backend no admiten variables. Después, comentar aquí el bloque backend y seguir el bootstrap.
