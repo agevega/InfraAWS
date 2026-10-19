@@ -1,15 +1,8 @@
 resource "aws_s3_bucket" "tf_state" {
-  bucket = var.state_bucket_name
+  bucket = local.state_bucket_name
 
   lifecycle {
     prevent_destroy = true
-  }
-}
-
-resource "aws_s3_bucket_ownership_controls" "tf_state" {
-  bucket = aws_s3_bucket.tf_state.id
-  rule {
-    object_ownership = "BucketOwnerEnforced"
   }
 }
 
@@ -28,15 +21,6 @@ resource "aws_s3_bucket_versioning" "tf_state" {
   }
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "tf_state" {
-  bucket = aws_s3_bucket.tf_state.id
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-
 resource "aws_s3_bucket_lifecycle_configuration" "tf_state" {
   bucket = aws_s3_bucket.tf_state.id
 
@@ -49,7 +33,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "tf_state" {
     filter {}
 
     noncurrent_version_expiration {
-      noncurrent_days           = 90
+      noncurrent_days           = 365
       newer_noncurrent_versions = 10
     }
 
@@ -86,4 +70,6 @@ data "aws_iam_policy_document" "require_tls" {
 resource "aws_s3_bucket_policy" "tf_state" {
   bucket = aws_s3_bucket.tf_state.id
   policy = data.aws_iam_policy_document.require_tls.json
+
+  depends_on = [aws_s3_bucket_public_access_block.tf_state]
 }
