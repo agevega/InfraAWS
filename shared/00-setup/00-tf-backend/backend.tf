@@ -8,7 +8,7 @@
 # terraform {
 #   backend "s3" {
 #     bucket       = "agevegacom-terraform-state"
-#     key          = "shared/terraform/00-setup/00-tf-backend/terraform.tfstate"
+#     key          = "shared/00-setup/00-tf-backend/terraform.tfstate"
 #     region       = "eu-south-2"
 #     use_lockfile = true
 #     profile      = "terraform"
