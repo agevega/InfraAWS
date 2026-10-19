@@ -4,7 +4,7 @@ locals {
   common_tags = {
     Project     = var.project_name
     Owner       = var.project_owner
-    ManagedBy   = var.aws_profile
+    ManagedBy   = "terraform"
     Environment = "shared"
     Module      = "00-setup/00-tf-backend"
   }
