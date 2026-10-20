@@ -1,6 +1,6 @@
 # 00-networking
 
-Red del entorno, separada en submódulos para desplegar o destruir cada pieza por separado. Se despliegan en orden numérico y se destruyen en orden inverso.
+Red del entorno, separada en submódulos para desplegar o destruir cada pieza por separado. `00-vpc-core` va siempre primero; el resto depende solo de él y puede desplegarse o destruirse cuando haga falta. Para destruir el core, destruye antes el resto.
 
 | Módulo | Para qué sirve |
 |---|---|
@@ -37,11 +37,11 @@ Cada entorno tiene libres los 9 bloques siguientes (por ejemplo, de `10.11` a `1
 
 ### Capas
 
-| Capa | Subredes en sandbox | Salida a internet |
-|---|---|---|
-| Pública | `10.250.1.0/24` a `10.250.3.0/24` | Por el Internet Gateway. Las instancias reciben IP pública automáticamente. |
-| Privada | `10.250.4.0/24` a `10.250.6.0/24` | Por el NAT, cuando `01-nat-gateway` está desplegado. |
-| Base de datos | `10.250.7.0/24` a `10.250.9.0/24` | Ninguna. |
+| Capa | Para qué | Subredes en sandbox | Salida a internet |
+|---|---|---|---|
+| Pública | Lo que debe ser accesible desde internet: balanceadores, NAT | `10.250.1.0/24` a `10.250.3.0/24` | Por el Internet Gateway. Las instancias reciben IP pública automáticamente. |
+| Privada | Aplicaciones y servidores | `10.250.4.0/24` a `10.250.6.0/24` | Por el NAT, cuando `01-nat-gateway` está desplegado. |
+| Base de datos | Bases de datos (RDS) | `10.250.7.0/24` a `10.250.9.0/24` | Ninguna. |
 
 > **Coste: gratis.** La VPC, las subredes, las tablas de rutas y el Internet Gateway no tienen coste.
 
