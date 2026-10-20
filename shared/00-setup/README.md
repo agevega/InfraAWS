@@ -1,11 +1,13 @@
 # 00-setup
 
-Módulos base. Se aplican una sola vez por cuenta de AWS, en orden numérico, antes que cualquier otro módulo.
+Módulos base de la cuenta de AWS. Despliégalos en orden numérico antes que el resto.
 
 | Módulo | Para qué sirve |
 |---|---|
 | [00-tf-backend](00-tf-backend/) | Bucket S3 que guarda el state de Terraform de todos los módulos |
 | [01-budgets](01-budgets/) | Alertas por email cuando el gasto supera los presupuestos mensual y diario |
+
+El **state** es el archivo con el que Terraform registra los recursos que gestiona. El **backend** indica dónde se guarda.
 
 ## Requisitos
 
@@ -16,14 +18,14 @@ Módulos base. Se aplican una sola vez por cuenta de AWS, en orden numérico, an
 
 ## Variables comunes
 
-Todos los módulos las declaran con los mismos valores por defecto.
+Ambos módulos usan estos valores por defecto:
 
 | Variable | Para qué sirve | Valor por defecto |
 |---|---|---|
 | `aws_region` | Región de despliegue | `eu-south-2` (España) |
 | `aws_profile` | Perfil de AWS CLI con el que se ejecuta Terraform | `terraform` |
-| `project_name` | Nombre del proyecto. De él salen los nombres de los recursos y la tag `Project` | `agevegacom` |
-| `project_owner` | Tag `Owner` | `Alejandro Vega` |
+| `project_name` | Nombre usado en los recursos y en la etiqueta `Project` | `agevegacom` |
+| `project_owner` | Etiqueta `Owner` | `Alejandro Vega` |
 
 ## 00-tf-backend
 
@@ -32,33 +34,47 @@ Todos los módulos las declaran con los mismos valores por defecto.
 | Recurso | Para qué sirve |
 |---|---|
 | `aws_s3_bucket` | Guarda los ficheros de state. `prevent_destroy` impide borrarlo por accidente. |
-| `aws_s3_bucket_versioning` | Conserva las versiones anteriores de cada state, para recuperarse de un apply erróneo o de un state corrupto. |
-| `aws_s3_bucket_lifecycle_configuration` | Borra las versiones antiguas a los 365 días, conservando siempre las 10 más recientes. Limpia las subidas incompletas a los 7 días. |
+| `aws_s3_bucket_versioning` | Conserva versiones anteriores del state para poder recuperarlo. |
+| `aws_s3_bucket_lifecycle_configuration` | Elimina versiones anteriores con más de 365 días, conservando las 10 más recientes de ellas. Limpia subidas incompletas a los 7 días. |
 | `aws_s3_bucket_public_access_block` | Bloquea cualquier acceso público. Los states pueden contener secretos. |
 | `aws_s3_bucket_policy` | Rechaza cualquier petición que no use HTTPS. |
 
 El cifrado (SSE-S3) y las ACLs desactivadas ya vienen así por defecto en AWS, por eso no se declaran. El bloqueo del state usa el lock nativo de Terraform en S3 (`use_lockfile`), sin DynamoDB.
 
-Coste: céntimos al mes; solo se guardan unos KB de state y sus versiones.
+> **Coste: céntimos al mes.** Solo se guardan unos KB de state y sus versiones.
 
-### Bootstrap (solo la primera vez)
+### Creación inicial (bootstrap)
 
-El bucket no puede guardar su propio state antes de existir, así que el backend de `backend.tf` empieza comentado. Desde `shared/00-setup/`:
+El bucket debe existir antes de guardar el state en él. El backend ya está activo en el repo: **si el bucket ya existe, omite estos pasos** y usa `terraform init`.
 
-```bash
-cd 00-tf-backend
-terraform init
-terraform apply
-# Descomentar el bloque terraform de backend.tf
-terraform init -migrate-state   # responder yes
-terraform state list            # debe mostrar los recursos
-rm terraform.tfstate terraform.tfstate.backup
-git add .terraform.lock.hcl     # y commitear
-```
+1. Comenta el bloque `terraform` de `00-tf-backend/backend.tf` para empezar con un state local.
+2. Crea el bucket desde `shared/00-setup/`:
+
+   ```bash
+   cd 00-tf-backend
+   terraform init
+   terraform apply
+   ```
+
+3. Descomenta el bloque y migra el state a S3:
+
+   ```bash
+   terraform init -migrate-state
+   ```
+
+   Responde `yes` cuando pida confirmar la copia.
+
+4. Comprueba que aparecen los recursos con `terraform state list`. Solo tras confirmar la migración, elimina las copias locales:
+
+   ```bash
+   rm terraform.tfstate terraform.tfstate.backup
+   ```
+
+Incluye `.terraform.lock.hcl` en el commit para fijar las versiones de los proveedores.
 
 ### Usar el backend desde otros módulos
 
-Cada módulo añade este `backend.tf`, con `key` igual a su ruta en el repo:
+Añade este `backend.tf` a cada módulo. Sustituye `key` por su ruta en el repo seguida de `/terraform.tfstate`:
 
 ```hcl
 terraform {
@@ -74,14 +90,18 @@ terraform {
 
 ## 01-budgets
 
-### Recursos
+### Alertas
 
-| Recurso | Para qué sirve |
-|---|---|
-| `aws_budgets_budget.monthly` | Presupuesto mensual. Avisa al superar el 10 %, 50 % y 100 % del límite con el gasto real, y si la previsión del mes supera el 200 %. |
-| `aws_budgets_budget.daily` | Presupuesto diario. Avisa al superar el 50 %, 100 %, 200 %, 500 % y 1000 % del límite. Detecta picos aunque el mensual ya haya avisado. |
+Los umbrales son porcentajes del presupuesto correspondiente:
 
-Coste: gratis; los presupuestos sin acciones no tienen coste.
+| Presupuesto | Gasto real | Previsión de gasto |
+|---|---|---|
+| Mensual | 10 %, 50 % y 100 % | 200 % del mes |
+| Diario | 50 %, 100 %, 200 %, 500 % y 1000 % | — |
+
+El diario detecta picos aunque el mensual ya haya avisado.
+
+> **Coste: gratis.** Los presupuestos sin acciones no tienen coste.
 
 ### Variables
 
@@ -99,9 +119,12 @@ Desde `shared/00-setup/`:
 cd 01-budgets
 terraform init
 terraform apply
-git add .terraform.lock.hcl     # y commitear
 ```
 
-## Fork para otro proyecto o cuenta
+Incluye `.terraform.lock.hcl` en el commit.
 
-Cambiar las variables comunes y `notification_email` y, en todos los `backend.tf`, el `bucket` (y el `profile` si cambia), porque los bloques backend no admiten variables. Después, comentar el bloque backend de `00-tf-backend` y seguir su bootstrap.
+## Adaptar a otro proyecto o cuenta
+
+1. Ajusta las variables comunes en ambos módulos y `notification_email` en `01-budgets`.
+2. Actualiza `bucket`, `region` y `profile` en todos los `backend.tf` según los nuevos valores. Los bloques backend no admiten variables.
+3. Para una cuenta nueva, sigue la creación inicial del bucket y después despliega los presupuestos.
