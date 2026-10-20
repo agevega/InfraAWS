@@ -1,7 +1,13 @@
-variable "aws_region" {
-  description = "AWS Region"
+variable "project_name" {
+  description = "Project name"
   type        = string
-  default     = "eu-south-2"
+  default     = "agevegacom"
+}
+
+variable "project_owner" {
+  description = "Project owner"
+  type        = string
+  default     = "Alejandro Vega"
 }
 
 variable "aws_profile" {
@@ -10,26 +16,20 @@ variable "aws_profile" {
   default     = "terraform"
 }
 
-variable "project_name" {
-  description = "Project name"
+variable "aws_region" {
+  description = "AWS Region"
   type        = string
-  default     = "agevegacom"
+  default     = "eu-south-2"
 }
 
-variable "common_tags" {
-  description = "Common tags"
-  type        = map(string)
-  default = {
-    Project     = "agevegacom"
-    Owner       = "Alejandro Vega"
-    ManagedBy   = "terraform"
-    Environment = "global"
-    Module      = "01-networking/00-vpc-core"
-  }
+variable "availability_zones" {
+  description = "Availability zones used to spread the subnets"
+  type        = list(string)
+  default     = ["eu-south-2a", "eu-south-2b", "eu-south-2c"]
 }
 
 variable "vpc_cidr" {
-  description = "CIDR block for the core VPC"
+  description = "CIDR block for the VPC"
   type        = string
   default     = "10.0.0.0/16"
 }
@@ -50,10 +50,4 @@ variable "db_subnets" {
   description = "CIDR blocks for the database subnets"
   type        = list(string)
   default     = ["10.0.7.0/24", "10.0.8.0/24", "10.0.9.0/24"]
-}
-
-variable "availability_zones" {
-  description = "Availability zones used to spread the subnets"
-  type        = list(string)
-  default     = ["eu-south-2a", "eu-south-2b", "eu-south-2c"]
 }
