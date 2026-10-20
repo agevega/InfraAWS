@@ -22,10 +22,10 @@ Ambos módulos usan estos valores por defecto:
 
 | Variable | Para qué sirve | Valor por defecto |
 |---|---|---|
-| `aws_region` | Región de despliegue | `eu-south-2` (España) |
-| `aws_profile` | Perfil de AWS CLI con el que se ejecuta Terraform | `terraform` |
 | `project_name` | Nombre usado en los recursos y en la etiqueta `Project` | `agevegacom` |
 | `project_owner` | Etiqueta `Owner` | `Alejandro Vega` |
+| `aws_profile` | Perfil de AWS CLI con el que se ejecuta Terraform | `terraform` |
+| `aws_region` | Región de despliegue | `eu-south-2` (España) |
 
 ## 00-tf-backend
 
@@ -81,9 +81,9 @@ terraform {
   backend "s3" {
     bucket       = "agevegacom-terraform-state"
     key          = "<env>/<NN-group>/<NN-module>/terraform.tfstate"
+    profile      = "terraform"
     region       = "eu-south-2"
     use_lockfile = true
-    profile      = "terraform"
   }
 }
 ```

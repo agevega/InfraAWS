@@ -1,4 +1,7 @@
 locals {
+  environment = "shared"
+  name_prefix = "${var.project_name}-${local.environment}"
+
   monthly_budget_name = "${var.project_name}-monthly-budget"
   daily_budget_name   = "${var.project_name}-daily-budget"
 
@@ -6,7 +9,7 @@ locals {
     Project     = var.project_name
     Owner       = var.project_owner
     ManagedBy   = "terraform"
-    Environment = "shared"
+    Environment = local.environment
     Module      = "00-setup/01-budgets"
   }
 }
