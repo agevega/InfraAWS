@@ -16,6 +16,14 @@ resource "aws_internet_gateway" "this" {
   }
 }
 
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+
+  tags = {
+    Name = "${local.name_prefix}-sg-default"
+  }
+}
+
 resource "aws_subnet" "public" {
   for_each = local.public_subnets
 
