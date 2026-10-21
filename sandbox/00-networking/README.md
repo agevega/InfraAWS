@@ -2,10 +2,11 @@
 
 Red del entorno, separada en submódulos para desplegar o destruir cada pieza por separado. `00-vpc-core` va siempre primero; el resto depende solo de él y puede desplegarse o destruirse cuando haga falta. Para destruir el core, destruye antes el resto.
 
-| Módulo                            | Para qué sirve                                             |
-| --------------------------------- | ---------------------------------------------------------- |
-| [00-vpc-core](00-vpc-core/)       | VPC, subredes, tablas de rutas e Internet Gateway          |
-| [01-nat-gateway](01-nat-gateway/) | Salida a internet para las subredes privadas, bajo demanda |
+| Módulo                                | Para qué sirve                                             |
+| ------------------------------------- | ---------------------------------------------------------- |
+| [00-vpc-core](00-vpc-core/)           | VPC, subredes, tablas de rutas e Internet Gateway          |
+| [01-nat-gateway](01-nat-gateway/)     | Salida a internet para las subredes privadas, bajo demanda |
+| [02-vpc-endpoints](02-vpc-endpoints/) | Acceso privado a S3 desde la VPC, sin pasar por el NAT     |
 
 Este código se desarrolla en `sandbox` y se copia tal cual a `dev`, `pre` y `pro`. Los entornos deben ser lo más idénticos posible.
 
@@ -103,6 +104,34 @@ terraform apply
 ```
 
 Para apagarlo, `terraform destroy` desde el mismo directorio. Incluye `.terraform.lock.hcl` en el commit.
+
+## 02-vpc-endpoints
+
+Da acceso privado a S3 desde toda la VPC: el tráfico va por la red interna de AWS, sin salir por el Internet Gateway ni pasar por el NAT.
+
+### Recursos
+
+| Recurso            | Para qué sirve                                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `aws_vpc_endpoint` | Endpoint de tipo gateway para S3, asociado a todas las tablas de rutas (pública, privadas y de base de datos). |
+
+Lee del state de `00-vpc-core` la VPC y las tablas de rutas. Solo usa las variables comunes.
+
+Con el endpoint, un bucket puede aceptar solo peticiones desde esta VPC mediante una política que exija el endpoint (`aws:sourceVpce`).
+
+> **Coste: gratis.** Los endpoints de tipo gateway no tienen coste por hora ni por tráfico.
+
+### Despliegue
+
+Desde `sandbox/00-networking/`:
+
+```bash
+cd 02-vpc-endpoints
+terraform init
+terraform apply
+```
+
+Incluye `.terraform.lock.hcl` en el commit.
 
 ## Copiar a otro entorno
 
