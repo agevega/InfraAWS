@@ -1,9 +1,10 @@
 data "terraform_remote_state" "vpc_core" {
   backend = "s3"
+
   config = {
-    bucket  = "agevegacom-terraform-state"
-    key     = "modules/01-networking/00-vpc-core/terraform.tfstate"
-    region  = var.aws_region
+    bucket  = local.state_bucket_name
+    key     = local.vpc_core_state_key
     profile = var.aws_profile
+    region  = var.aws_region
   }
 }
