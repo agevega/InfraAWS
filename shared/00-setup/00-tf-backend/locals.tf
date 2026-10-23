@@ -1,6 +1,7 @@
 locals {
-  environment = "shared"
-  name_prefix = "${var.project_name}-${local.environment}"
+  environment       = "shared"
+  environment_short = "shared"
+  name_prefix       = "${var.project_name}-${local.environment_short}"
 
   state_bucket_name = "${var.project_name}-terraform-state"
 

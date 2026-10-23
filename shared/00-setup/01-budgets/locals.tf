@@ -1,6 +1,7 @@
 locals {
-  environment = "shared"
-  name_prefix = "${var.project_name}-${local.environment}"
+  environment       = "shared"
+  environment_short = "shared"
+  name_prefix       = "${var.project_name}-${local.environment_short}"
 
   monthly_budget_name = "${var.project_name}-monthly-budget"
   daily_budget_name   = "${var.project_name}-daily-budget"
