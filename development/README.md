@@ -19,4 +19,4 @@ Entorno de desarrollo. Su código es una copia de [`sandbox`](../sandbox/), el p
 | Subredes privadas           | `10.250.4.0/24` a `10.250.6.0/24` | `10.30.4.0/24` a `10.30.6.0/24` |
 | Subredes de base de datos   | `10.250.7.0/24` a `10.250.9.0/24` | `10.30.7.0/24` a `10.30.9.0/24` |
 
-Recursos, variables, costes y despliegue: igual que en [sandbox/00-networking](../sandbox/00-networking/README.md), ejecutando los comandos desde `development/00-networking/`.
+Recursos, variables, costes y despliegue: igual que en [sandbox/00-networking](../sandbox/README.md), ejecutando los comandos desde `development/00-networking/`.

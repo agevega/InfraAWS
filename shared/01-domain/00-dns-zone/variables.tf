@@ -1,7 +1,13 @@
-variable "aws_region" {
-  description = "AWS Region"
+variable "project_name" {
+  description = "Project name"
   type        = string
-  default     = "eu-south-2"
+  default     = "agevegacom"
+}
+
+variable "project_owner" {
+  description = "Project owner"
+  type        = string
+  default     = "Alejandro Vega"
 }
 
 variable "aws_profile" {
@@ -10,26 +16,14 @@ variable "aws_profile" {
   default     = "terraform"
 }
 
-variable "project_name" {
-  description = "Project name"
+variable "aws_region" {
+  description = "AWS Region"
   type        = string
-  default     = "agevegacom"
-}
-
-variable "common_tags" {
-  description = "Common tags"
-  type        = map(string)
-  default = {
-    Project     = "agevegacom"
-    Owner       = "Alejandro Vega"
-    ManagedBy   = "terraform"
-    Environment = "global"
-    Module      = "99-domain/00-dns-zone"
-  }
+  default     = "eu-south-2"
 }
 
 variable "domain_name" {
-  description = "Primary domain name"
+  description = "Domain name"
   type        = string
   default     = "agevega.com"
 }

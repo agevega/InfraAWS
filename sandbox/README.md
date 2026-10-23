@@ -4,9 +4,9 @@ Red del entorno, separada en submódulos para desplegar o destruir cada pieza po
 
 | Módulo                                | Para qué sirve                                             |
 | ------------------------------------- | ---------------------------------------------------------- |
-| [00-vpc-core](00-vpc-core/)           | VPC, subredes, tablas de rutas e Internet Gateway          |
-| [01-nat-gateway](01-nat-gateway/)     | Salida a internet para las subredes privadas, bajo demanda |
-| [02-vpc-endpoints](02-vpc-endpoints/) | Acceso privado a S3 desde la VPC, sin pasar por el NAT     |
+| [00-vpc-core](00-networking/00-vpc-core/)           | VPC, subredes, tablas de rutas e Internet Gateway          |
+| [01-nat-gateway](00-networking/01-nat-gateway/)     | Salida a internet para las subredes privadas, bajo demanda |
+| [02-vpc-endpoints](00-networking/02-vpc-endpoints/) | Acceso privado a S3 desde la VPC, sin pasar por el NAT     |
 
 Este código se desarrolla en `sandbox` y se copia tal cual a `dev`, `pre` y `pro`. Los entornos deben ser lo más idénticos posible.
 
@@ -49,7 +49,7 @@ Cada entorno tiene libres los 9 bloques siguientes (por ejemplo, de `10.11` a `1
 
 ### Variables
 
-Además de las [variables comunes](../../shared/00-setup/README.md#variables-comunes):
+Además de las [variables comunes](../shared/README.md#variables-comunes):
 
 | Variable             | Para qué sirve                                                  | Valor por defecto                                 |
 | -------------------- | --------------------------------------------------------------- | ------------------------------------------------- |

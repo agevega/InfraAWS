@@ -1,10 +1,9 @@
 terraform {
   backend "s3" {
-    bucket         = "agevegacom-terraform-state"
-    key            = "modules/99-domain/00-dns-zone/terraform.tfstate"
-    dynamodb_table = "terraform-state-lock"
-    region         = "eu-south-2"
-    profile        = "terraform"
-    encrypt        = true
+    bucket       = "agevegacom-terraform-state"
+    key          = "shared/01-domain/00-dns-zone/terraform.tfstate"
+    profile      = "terraform"
+    region       = "eu-south-2"
+    use_lockfile = true
   }
 }

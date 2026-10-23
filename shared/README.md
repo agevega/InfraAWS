@@ -4,8 +4,8 @@ Módulos base de la cuenta de AWS. Despliégalos en orden numérico antes que el
 
 | Módulo | Para qué sirve |
 |---|---|
-| [00-tf-backend](00-tf-backend/) | Bucket S3 que guarda el state de Terraform de todos los módulos |
-| [01-budgets](01-budgets/) | Alertas por email cuando el gasto supera los presupuestos mensual y diario |
+| [00-tf-backend](00-setup/00-tf-backend/) | Bucket S3 que guarda el state de Terraform de todos los módulos |
+| [01-budgets](00-setup/01-budgets/) | Alertas por email cuando el gasto supera los presupuestos mensual y diario |
 
 El **state** es el archivo con el que Terraform registra los recursos que gestiona. El **backend** indica dónde se guarda.
 
