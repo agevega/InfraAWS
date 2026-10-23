@@ -136,5 +136,5 @@ Incluye `.terraform.lock.hcl` en el commit.
 ## Copiar a otro entorno
 
 1. Copia `sandbox/00-networking` a `<entorno>/00-networking`.
-2. En cada módulo, cambia `local.environment` en `locals.tf` y la `key` en `backend.tf`.
+2. En cada módulo, cambia `environment` y `environment_short` en `locals.tf`, y la `key` en `backend.tf`.
 3. En `00-vpc-core`, ajusta `vpc_cidr` y las subredes según el plan de direccionamiento.
