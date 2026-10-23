@@ -1,5 +1,5 @@
 locals {
-  environment = "sandbox"
+  environment = "staging"
   name_prefix = "${var.project_name}-${local.environment}"
 
   state_bucket_name  = "${var.project_name}-terraform-state"

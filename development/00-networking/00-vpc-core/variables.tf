@@ -31,23 +31,23 @@ variable "availability_zones" {
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
-  default     = "10.250.0.0/16"
+  default     = "10.30.0.0/16"
 }
 
 variable "public_subnets" {
   description = "CIDR blocks for the public subnets"
   type        = list(string)
-  default     = ["10.250.1.0/24", "10.250.2.0/24", "10.250.3.0/24"]
+  default     = ["10.30.1.0/24", "10.30.2.0/24", "10.30.3.0/24"]
 }
 
 variable "private_subnets" {
   description = "CIDR blocks for the private subnets"
   type        = list(string)
-  default     = ["10.250.4.0/24", "10.250.5.0/24", "10.250.6.0/24"]
+  default     = ["10.30.4.0/24", "10.30.5.0/24", "10.30.6.0/24"]
 }
 
 variable "db_subnets" {
   description = "CIDR blocks for the database subnets"
   type        = list(string)
-  default     = ["10.250.7.0/24", "10.250.8.0/24", "10.250.9.0/24"]
+  default     = ["10.30.7.0/24", "10.30.8.0/24", "10.30.9.0/24"]
 }

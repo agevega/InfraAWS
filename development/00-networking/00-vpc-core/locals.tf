@@ -1,5 +1,5 @@
 locals {
-  environment = "sandbox"
+  environment = "development"
   name_prefix = "${var.project_name}-${local.environment}"
 
   az_letters = [for az in var.availability_zones : substr(az, -1, 1)]
