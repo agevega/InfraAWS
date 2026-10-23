@@ -1,6 +1,7 @@
 locals {
-  environment = "staging"
-  name_prefix = "${var.project_name}-${local.environment}"
+  environment       = "staging"
+  environment_short = "pre"
+  name_prefix       = "${var.project_name}-${local.environment_short}"
 
   az_letters = [for az in var.availability_zones : substr(az, -1, 1)]
   azs        = zipmap(local.az_letters, var.availability_zones)

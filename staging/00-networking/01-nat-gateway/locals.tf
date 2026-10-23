@@ -1,6 +1,7 @@
 locals {
-  environment = "staging"
-  name_prefix = "${var.project_name}-${local.environment}"
+  environment       = "staging"
+  environment_short = "pre"
+  name_prefix       = "${var.project_name}-${local.environment_short}"
 
   state_bucket_name  = "${var.project_name}-terraform-state"
   vpc_core_state_key = "${local.environment}/00-networking/00-vpc-core/terraform.tfstate"
